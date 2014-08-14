@@ -22,7 +22,7 @@ public class AnimationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(view=new BitmapView(this));
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -34,50 +34,48 @@ public class AnimationActivity extends Activity {
 		};
 		handler.sendEmptyMessage(0);
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 		handler=null;
-	}	
-	
+	}
+
 	class BitmapView extends View {
-		Bitmap bitmap[][][]=new Bitmap[4][3][];
+
+		Bitmap poseImage;
+		Bitmap eyeImage;
+		Bitmap mouseImage;
 
 		public BitmapView(Context c) {
 			super(c);
-			int n[]={1, 3, 3};
-			for (int i=0; i<bitmap.length; i++) {
-				for (int j=0; j<bitmap[i].length; j++) {
-					bitmap[i][j]=new Bitmap[n[j]];
-				}
-			}
 		}
-		
+
 		Bitmap getBitmap(int i, int j, int k) {
 			String s[]={"body", "eye", "mouth"};
-			if (bitmap[i][j][k]==null) {
-				Resources r=getContext().getResources();
-				bitmap[i][j][k]=BitmapFactory.decodeResource(
-					r, r.getIdentifier("pose"+i+s[j]+k, "drawable", 
-						getContext().getPackageName()));
-			}
-			return bitmap[i][j][k];
+			Resources r=getContext().getResources();
+			return BitmapFactory.decodeResource(
+				r, r.getIdentifier("pose"+i+s[j]+k, "drawable",
+					getContext().getPackageName()));
 		}
-		
+
 		@Override
 		protected void onDraw(Canvas c) {
 			c.drawColor(Color.WHITE);
 			Paint p=new Paint();
-			int pose=(int)(Math.random()*bitmap.length);
-			int eye=(int)(Math.random()*bitmap[pose][1].length);
-			int mouth=(int)(Math.random()*bitmap[pose][2].length);
-			int x=(c.getWidth()-getBitmap(pose, 0, 0).getWidth())/2;
-			c.drawBitmap(getBitmap(pose, 0, 0), x, 0, p);
-			c.drawBitmap(getBitmap(pose, 1, eye), x, 0, p);
-			c.drawBitmap(getBitmap(pose, 2, mouth), x, 0, p);
+			int pose=(int)(Math.random()*4);
+			int eye=(int)(Math.random()*3);
+			int mouth=(int)(Math.random()*3);
+
+			poseImage =  getBitmap(pose, 0, 0);
+			eyeImage = getBitmap(pose, 1, eye);
+			mouseImage = getBitmap(pose, 2, mouth);
+			int x=(c.getWidth()-poseImage.getWidth())/2;
+			c.drawBitmap(poseImage, x, 0, p);
+			c.drawBitmap(eyeImage, x, 0, p);
+			c.drawBitmap(mouseImage, x, 0, p);
 
 			if (handler!=null) handler.sendEmptyMessageDelayed(0, 3000);
-		}		
-	}	
+		}
+	}
 }
